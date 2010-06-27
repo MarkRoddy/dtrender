@@ -1,0 +1,9 @@
+dtrender is a command line tool for running django templates.  This
+proves useful for generating text (not just web pages) with individual
+aspects that change frequently enough that seperating it from the 
+markup but not frequently enough to warrant complete dynamic delivery
+of the text (such as full django site).  
+
+For example, a text document which contains some source code could
+be written as a template and the source code kept in a seperate file
+so that it may be executed and the full document rebuilt.
