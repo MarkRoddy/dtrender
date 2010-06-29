@@ -89,13 +89,15 @@ class TemplateRenderer(object):
    
     
 def main(args):
-    parser = OptionParser("usage: %prog [-o file] [-i file] template")
+    parser = OptionParser("usage: %prog [-o file] [-i file] [--value name1=value --value name2=value ...] template")
     parser.add_option('--search-path-template', dest='template_search_path', default='.', action = 'store',
                       help = 'Comma seperated list of directories to search for templates (defaults to ".")')
     parser.add_option('-o', '--out-file', dest='output_file', default = '', action = 'store',
                       help = 'Path to write rendered template to.  Defaults to stdout')
     parser.add_option('-i', '--in-file', dest='input_file', default = '', action = 'store',
-                      help = 'Path to file containing JSON encoded values to populate the template.  Defaults to stdin.')
+                      help = 'Path to file containing JSON encoded values to populate the template.  Specify \'-\' to use stdin')
+    parser.add_option('--value', dest='template_values', action = 'append',
+                      help = 'name=value pair to be populated in the template.  This option may be specified more than once')
     options, args = parser.parse_args(args)
     if 2 != len(args):
         parser.print_usage()
@@ -109,9 +111,12 @@ def main(args):
     else:
         outfile = sys.stdout
     if options.input_file:
-        infile = open(options.input_file, 'r')
+        if '-' == options.input_file:
+            infile = sys.stdin
+        else:
+            infile = open(options.input_file, 'r')
     else:
-        infile = sys.stdin
+        infile = None
 
     try:
         template = tr.make_template(template_spec)
@@ -119,7 +124,11 @@ def main(args):
         sys.stderr.write(str(e) + '\n')
         return 1
 
-    tr.add_values(infile)
+    if infile:
+        tr.add_values(infile)
+    for item in options.template_values:
+        name, value = item.split('=',1)
+        tr.add_value(name,value)
     tr.render(template, outfile)
     return 0
 
