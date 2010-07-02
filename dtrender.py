@@ -96,7 +96,7 @@ def main(args):
                       help = 'Path to write rendered template to.  Defaults to stdout')
     parser.add_option('-i', '--in-file', dest='input_file', default = '', action = 'store',
                       help = 'Path to file containing JSON encoded values to populate the template.  Specify \'-\' to use stdin')
-    parser.add_option('--value', dest='template_values', action = 'append',
+    parser.add_option('--value', dest='template_values', action = 'append',default = [],
                       help = 'name=value pair to be populated in the template.  This option may be specified more than once')
     options, args = parser.parse_args(args)
     if 2 != len(args):
